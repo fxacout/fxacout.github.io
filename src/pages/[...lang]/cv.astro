@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CVPageWrapper from '../../components/CVPageWrapper';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },  // /cv (English - default)
+    { params: { lang: 'es' } },       // /es/cv (Spanish)
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = lang === 'es' ? 'es' : 'en';
+---
+
+<Layout title="CV | Fernando Astorga Cobos" lang={currentLang}>
+	<CVPageWrapper client:load lang={currentLang} />
+</Layout>
