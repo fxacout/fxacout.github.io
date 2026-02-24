@@ -6,6 +6,12 @@ yarn create astro@latest -- --template basics
 
 > 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
+## GitHub Pages Deployment
+
+This site deploys to **https://fxacout.github.io** via GitHub Actions.
+
+**Required setup:** In the repo, go to **Settings → Pages**. Under "Build and deployment", set **Source** to **GitHub Actions**. Without this, the old branch-based content will be shown instead of the built site.
+
 ## 🚀 Project Structure
 
 Inside of your Astro project, you'll see the following folders and files:

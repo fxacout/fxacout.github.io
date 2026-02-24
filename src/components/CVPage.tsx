@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import { Download, Mail, Phone, Linkedin, Github, MapPin, GraduationCap, Briefcase, Code2, Languages } from "lucide-react";
 
 interface CVPageProps {
@@ -37,30 +37,41 @@ interface CVPageProps {
 }
 
 const CVPage = ({ translations }: CVPageProps) => {
-  const cvRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
 
-  const handleDownloadPDF = async () => {
-    if (!cvRef.current) return;
-    
-    const html2pdf = (await import("html2pdf.js")).default;
-    
-    const opt = {
-      margin: 0,
-      filename: "Fernando_Astorga_Cobos_CV.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  const A4_WIDTH_MM = 210;
+  const A4_HEIGHT_MM = 297;
+  const MM_TO_PX = 96 / 25.4;
+  const A4_WIDTH_PX = A4_WIDTH_MM * MM_TO_PX;
+  const A4_HEIGHT_PX = A4_HEIGHT_MM * MM_TO_PX;
+
+  useEffect(() => {
+    const updatePreviewScale = () => {
+      const horizontalPadding = window.innerWidth < 640 ? 16 : 32;
+      const availableWidth = Math.max(window.innerWidth - horizontalPadding, 0);
+      setPreviewScale(Math.min(1, availableWidth / A4_WIDTH_PX));
     };
-    
-    html2pdf().set(opt).from(cvRef.current).save();
+
+    updatePreviewScale();
+    window.addEventListener("resize", updatePreviewScale);
+
+    return () => {
+      window.removeEventListener("resize", updatePreviewScale);
+    };
+  }, [A4_WIDTH_PX]);
+
+  const handleDownloadPDF = () => {
+    window.print();
   };
 
   const skills = translations.skillsList;
+  const previewWidth = A4_WIDTH_PX * previewScale;
+  const previewHeight = A4_HEIGHT_PX * previewScale;
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="cv-print-root min-h-screen bg-background py-4 px-2 sm:py-8 sm:px-4">
       {/* Download Button */}
-      <div className="mx-auto mb-6 flex justify-end print:hidden" style={{ width: '210mm', maxWidth: '100%' }}>
+      <div className="mx-auto mb-4 flex justify-end print:hidden sm:mb-6" style={{ width: previewWidth, maxWidth: '100%' }}>
         <button
           onClick={handleDownloadPDF}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-sans font-medium shadow-warm hover:shadow-warm-lg transition-all duration-300 hover:-translate-y-0.5"
@@ -71,13 +82,14 @@ const CVPage = ({ translations }: CVPageProps) => {
       </div>
 
       {/* CV Content - A4 size: 210mm x 297mm */}
-      <div
-        ref={cvRef}
-        className="mx-auto bg-background shadow-warm-lg overflow-hidden border border-border"
-        style={{ width: '210mm', height: '297mm', maxWidth: '100%' }}
-      >
-        {/* Header */}
-        <div className="bg-primary text-primary-foreground" style={{ padding: '28px 36px' }}>
+      <div className="cv-preview-container mx-auto" style={{ width: previewWidth, height: previewHeight, maxWidth: "100%" }}>
+        <div className="cv-preview-scale-wrapper" style={{ transform: `scale(${previewScale})`, transformOrigin: "top left", width: "210mm", height: "297mm" }}>
+          <div
+            className="cv-print-page bg-background shadow-warm-lg overflow-hidden border border-border"
+            style={{ width: '210mm', height: '297mm' }}
+          >
+            {/* Header */}
+            <div className="bg-primary text-primary-foreground" style={{ padding: '28px 36px' }}>
           <div className="flex gap-6 items-center">
             {/* Avatar */}
             <div 
@@ -118,8 +130,8 @@ const CVPage = ({ translations }: CVPageProps) => {
           </div>
         </div>
 
-        {/* Body - fills remaining height */}
-        <div className="flex" style={{ height: 'calc(297mm - 160px)' }}>
+            {/* Body - fills remaining height */}
+            <div className="flex" style={{ height: 'calc(297mm - 160px)' }}>
           {/* Sidebar */}
           <div className="bg-card h-full" style={{ width: '35%', padding: '24px 28px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -317,6 +329,8 @@ const CVPage = ({ translations }: CVPageProps) => {
                 </div>
               </div>
             </section>
+          </div>
+            </div>
           </div>
         </div>
       </div>

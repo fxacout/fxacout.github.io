@@ -97,7 +97,7 @@ export const translations = {
     'footer.made': 'Made with ☕ and lots of love',
 
     // CV Page
-    'cv.downloadPdf': 'Download PDF',
+    'cv.downloadPdf': 'Print / Save PDF',
     'cv.contact': 'Contact',
     'cv.experience': 'Work Experience',
     'cv.education': 'Education',
@@ -241,7 +241,7 @@ export const translations = {
     'footer.made': 'Hecho con ☕ y mucho amor',
 
     // CV Page
-    'cv.downloadPdf': 'Descargar PDF',
+    'cv.downloadPdf': 'Imprimir / Guardar PDF',
     'cv.contact': 'Contacto',
     'cv.experience': 'Experiencia Laboral',
     'cv.education': 'Educación',
